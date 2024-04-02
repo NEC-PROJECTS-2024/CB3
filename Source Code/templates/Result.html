@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bone Fracture Detection</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      .column {
+        float: left;
+        width: 33.33%;
+        padding: 5px;
+      }
+
+      .row::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+      .c1 {
+        float: left;
+        width: 40.33%;
+        padding: 10px;
+        margin: 10px;
+      }
+      .image {
+        width: 280px;
+        height: 300px;
+        margin-top: 80px;
+      }
+      .imag {
+        width: 500px;
+        height: 300px;
+        margin-left: 70px;
+      }
+      h1{
+            text-align: center;
+        }
+      .r1::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+      #div2 img {
+        width: 200px;
+        height: 250px;
+        display: block;
+      }
+      .danger {
+        color: red;
+      }
+      button {
+        margin-top: 50px;
+        margin-left: 100px;
+        background-color: #008cba;
+        font-size: 20px;
+        color: white;
+      }
+      input {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid" style="background-color: #fff">
+      <div class="jumbotron" style="background-color: #ff8566">
+        <h1>Bone Fracture Detection</h1>
+      </div>
+
+      <div class="container">
+        <div class="jumbotron">
+          <form
+            class="form-horizontal"
+            method="post"
+            action="/image"
+            enctype="multipart/form-data"
+          >
+            <div class="form-group" class="row">
+              <label class="control-label col-sm-2" for="value1"
+                >Upload X-Ray:</label
+              >
+              <div class="column" class="col-sm-10" id="div1">
+                <div class="c1">
+                  <input
+                    class="r1"
+                    type="file"
+                    id="value1"
+                    name="value1"
+                    accept="image/*"
+                  />
+                  <div class="r1" class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <input type="submit" value="Upload" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column" id="div2">
+                <script>
+                  const chooseFile = document.getElementById("value1");
+                  const imgPreview = document.getElementById("div2");
+                  chooseFile.addEventListener("change", function () {
+                    getImgData();
+                  });
+                  function getImgData() {
+                    const files = chooseFile.files[0];
+                    if (files) {
+                      const fileReader = new FileReader();
+                      fileReader.readAsDataURL(files);
+                      fileReader.addEventListener("load", function () {
+                        imgPreview.innerHTML =
+                          '<img src="' + this.result + '" />';
+                      });
+                    }
+                  }
+                </script>
+              </div>
+            </div>
+          </form>
+          {% if filename %}
+          <div class="r1">
+            <div class="c1">
+              <div class="display-image">
+                <img
+                  src="{{ url_for('display_image', filename=filename) }}"
+                  class="image"
+                />
+              </div>
+              <button
+                type="button"
+                onClick="parent.open('/image/detect/')"
+                value="Detect"
+              >
+                Detect
+              </button>
+            </div>
+            <div class="c1">
+              {% if prediction==1 %}
+              <h2>
+                Prediction:
+                <span class="danger">Opps! Your Bone is Fractured</span>
+              </h2>
+              <img
+                class="imag"
+                src="https://totalorthocare.in/wp-content/uploads/bone-fracture-foot-leg-male-patient-being-examined-by-woman-doctor-hospital-1024x683.jpg"
+                alt="Bone Image"
+              />
+              {% elif prediction==0 %}
+              <h2>
+                Prediction:
+                <span class="safe"
+                  >No Worries ! Your Bone is not Fractured</span
+                >
+              </h2>
+              <img
+                class="imag"
+                src="https://images.prismic.io/baker-tilly-www/a8a8b341-96a2-461e-8ff7-a86dfdfd968e_Healthcare-Life-Sciences-Commercial-Enablement.jpg?auto=compress,format&rect=0,425,3000,1222&w=1670&h=680"
+                alt="Not Bone Fracture Image"
+              />
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
